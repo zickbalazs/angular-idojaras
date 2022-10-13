@@ -8,18 +8,3 @@ class Weather{
         this.color = params.color;
     }
 }
-
-
-
-
-
-class Day{
-    time;
-    date;
-    forecast;
-    constructor(params){
-        this.time = params.time;
-        this.date = params.date;
-        this.forecast = params.forecasts;
-    }
-}
