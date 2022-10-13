@@ -30,7 +30,7 @@
     
                                 </div>
                                 <div class="d-flex" ng-if="forecasts.length!=0">
-                                    <div class="card mx-2" ng-repeat="day in forecasts">
+                                    <div class="card mx-2" ng-repeat="day in forecasts | orderBy:date">
                                         <div class="card-header" style="background: {{day.cond.color}};">{{day.date.split('T')[0].replaceAll('-', '.')}}</div>
                                         <div class="card-body">
                                             <h3 class="text-center fs-1"><i class="{{day.cond.icon}}"></i></h3>
