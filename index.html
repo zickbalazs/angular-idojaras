@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="css/style.css">
     <title>Időjárás</title>
 </head>
-<body>
-    <div class="container" ng-app="app" ng-controller="weather">
-        <header>
-            <h1 class="text-center mb-0">Időjárás</h1>
-            <h2 class="text-center text-muted mb-3">{{current.location}}</h2>
+<body ng-app="app" ng-controller="weather" class="w-100 p-0 m-0">
+        <header class="mb-3 py-4 w-100 bg-success px-0 mx-0">
+            <h1 class="text-center text-white pb-3 mb-0 border-bottom">Időjárás</h1>
+            <h2 class="text-center text-white mb-3">{{current.location}}</h2>
         </header>
+    <div class="container">
         <main>
-            <section id="Forecast">
+            <section id="Forecast" class="mb-3">
                 <div class="accordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="fhead">
@@ -27,17 +27,20 @@
                                 <div class="alert" ng-if="forecasts.length==0">
                                     <h5 class="text-center text-danger mb-0">Nincs még előrejelzés</h5>
                                     <p class="text-muted text-center my-0">Adjon hozzá!</p>
-    
                                 </div>
-                                <div class="d-flex" ng-if="forecasts.length!=0">
-                                    <div class="card mx-2" ng-repeat="day in forecasts | orderBy:date">
+                                <div class="" ng-if="forecasts.length!=0">
+                                    <div class="card m-auto my-3" ng-repeat="day in forecasts | orderBy: maxC:false">
                                         <div class="card-header" style="background: {{day.cond.color}};">{{day.date.split('T')[0].replaceAll('-', '.')}}</div>
-                                        <div class="card-body">
-                                            <h3 class="text-center fs-1"><i class="{{day.cond.icon}}"></i></h3>
-                                            <ul>
-                                                <li>{{day.minC}}&#x2103;</li>
-                                                <li>{{day.maxC}}&#x2103;</li>
-                                            </ul>
+                                        <div class="card-body w-100 px-0" style="background: linear-gradient(180deg, {{day.cond.color}}, 12%, white)">
+                                            <h3 class="text-center fs-1 py-3 border-bottom border-dark"><i class="{{day.cond.icon}}"></i></h3>
+                                            <div class="px-5">
+                                                <ul>
+                                                    <li>{{day.minC}}&#x2103;</li>
+                                                    <li>{{day.maxC}}&#x2103;</li>
+                                                </ul>
+                                                <button type="button" ng-click="Delete(day.date)" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                                <button type="button" ng-click="AllowModify($index)" class="btn btn-warning"><i class="bi bi-pen"></i></button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -45,17 +48,16 @@
                         </div>
                     </div>
                 </div>
-                
             </section>
-            <section>
+            <section class="mb-3">
                 <div class="accordion" id="accordionFlushExample">
                     <div class="accordion-item">
                       <h2 class="accordion-header" id="flush-headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
                           Hozzáadás
                         </button>
                       </h2>
-                      <div id="flush-collapseOne"  class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                      <div id="flush-collapseOne"  class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <div class="mb-3">
                                 <label for="day" class="form-label">Nap</label>
@@ -80,9 +82,62 @@
                         </div>
                       </div>
                     </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header" id="flush-headingTwo">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                Módosítás
+                            </button>
+                            <div id="flush-collapseTwo"  class="accordion-collapse collapse show" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <div class="alert" ng-if="forecasts.length==0">
+                                        <h5 class="text-center text-danger mb-0">Nincs még előrejelzés</h5>
+                                        <p class="text-muted text-center my-0">Adjon hozzá!</p>
+                                    </div>
+                                    <div class="alert" ng-if="!canModify && forecasts.length!=0">
+                                        <h5 class="text-center text-danger mb-0">Még nem választott szerkesztendő időjárást!</h5>
+                                        <p class="text-center text-muted my-0">Válasszon egyet!</p>
+                                    </div>
+                                    <div ng-if="canModify">
+                                        <div class="mb-3">
+                                            <label for="modDate" class="form-label">Dátum:</label>
+                                            <input type="date" class="form-control" ng-model="modW.date" name="modDate">
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label for="modmaxC" class="bg-primary input-group-text"><i class="text-light bi-thermometer-high"></i></label>
+                                            <input type="number" class="form-control" placeholder="23" name="modminC" max="{{modmaxC}}" ng-model="modW.minC">
+                                            <label class="bg-light input-group-text">&#x2103;</label>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label for="modminC" class="bg-danger input-group-text"><i class="text-light bi-thermometer-high"></i></label>
+                                            <input type="number" class="form-control" placeholder="12" name="modminC" min="{{modminC}}" ng-model="modW.maxC">
+                                            <label class="bg-light input-group-text">&#x2103;</label>
+                                        </div>
+                                        <h4>Viszonyok</h4>
+                                        <div ng-repeat="condition in conditions">
+                                            <input ng-model="modW.cond" type="radio" name="condition" value="{{condition}}" class="form-check-input">
+                                            <label for="condition" class="form-check-label">{{condition.condition}}</label>
+                                        </div>
+                                        <div class="mt-3">
+                                            <input type="button" class="btn btn-primary" value="Módosítás" ng-click="Modify(modindex)">
+                                            <input type="button" class="btn btn-primary" value="Mégse" ng-click="CantModify()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
+        
+    </div>
+    <div class="container-fluid w-100 px-0 mx-0 my-0">
+        <footer class="bg-dark text-light text-center mb-0">
+            <div class="py-3">
+                <p class="my-0 py-0 border-bottom w-50 m-auto">Made by ZB</p>
+                <h6 class="my-0 py-0">&copy; 2022.</h6>
+            </div>
+        </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="./js/angular.min.js"></script>
